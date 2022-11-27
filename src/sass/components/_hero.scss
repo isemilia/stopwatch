@@ -2,4 +2,8 @@
     background: linear-gradient(247.58deg, var(--clr-100) 0%, var(--clr-200) 100%);
     min-height: 100vh;
     padding: 85px 0 130px;
+    @media (max-width: 767px) {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 }

@@ -1,5 +1,9 @@
 .records {
     font-family: var(--ff-primary);
+    &-wrap {
+        max-height: var(--max-height);
+        overflow-y: auto;
+    }
     &-item {
         display: flex;
         align-items: center;
@@ -19,11 +23,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            gap: 1.5rem;
             width: 100%;
-            padding: .75rem 1rem;
+            padding: .75rem clamp(.5rem, 3vw, 1rem);
             margin-right: 0.43rem;
             font-weight: 500;
-            font-size: 1.25rem;
+            font-size: clamp(1rem, 3vw, 1.25rem);
             line-height: 1.15em;
             color: var(--clr-300);
         }
@@ -31,12 +36,24 @@
             border: 1px solid transparent;
             outline: 0;
             color: inherit;
+            max-width: 100%;
+            width: 100%;
             &:focus {
                 border: 1px solid var(--clr-300);
                 border-radius: 4px;
             }
             &::placeholder {
                 color: inherit;
+            }
+        }
+        &-info {
+            white-space: nowrap;
+        }
+        &-remove {
+            svg {
+                --size: clamp(1.375rem, 6vw, 2.375rem);
+                height: var(--size);
+                width: var(--size);
             }
         }
     }
@@ -47,10 +64,10 @@
         max-width: fit-content;
         font-family: var(--ff-primary);
         font-weight: 600;
-        font-size: 1.5rem;
+        font-size: clamp(1.2rem, 3vw, 1.5rem);
         line-height: 1.2em;
         color: var(--clr-300);
-        padding: 7px 24px;
+        padding: .29em 1em;
         background: #FFFFFF;
         border-radius: 15px;
         &:hover {
