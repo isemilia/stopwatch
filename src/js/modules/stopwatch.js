@@ -40,7 +40,7 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
         i = 0;
     }
 
-    //
+    // stopwatch controls
 
     let clickCount = 0;
     let interval;

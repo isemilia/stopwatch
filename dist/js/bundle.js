@@ -64,7 +64,7 @@ function stopwatch(_ref) {
     i = 0;
   };
 
-  //
+  // stopwatch controls
 
   var clickCount = 0;
   var interval;
