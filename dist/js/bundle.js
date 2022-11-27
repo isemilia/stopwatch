@@ -10,12 +10,15 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__),
+/* harmony export */   "split": () => (/* binding */ split)
 /* harmony export */ });
 /* harmony import */ var core_js_modules_web_timers_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.timers.js */ "./node_modules/core-js/modules/web.timers.js");
 /* harmony import */ var core_js_modules_web_timers_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_timers_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es_array_concat_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es.array.concat.js */ "./node_modules/core-js/modules/es.array.concat.js");
 /* harmony import */ var core_js_modules_es_array_concat_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_concat_js__WEBPACK_IMPORTED_MODULE_1__);
+
+
 
 
 function stopwatch(_ref) {
@@ -33,9 +36,6 @@ function stopwatch(_ref) {
   var splitBtn = document.querySelector(splitTrigger);
   var resetBtn = document.querySelector(resetTrigger);
   var i = 0;
-  var prependZero = function prependZero(n) {
-    return n < 10 ? '0' + n : n;
-  };
   var updateTime = function updateTime(s) {
     seconds.textContent = prependZero(s);
     if (s > 59) {
@@ -51,7 +51,7 @@ function stopwatch(_ref) {
     return setInterval(function () {
       updateTime(i);
       i++;
-    }, 100);
+    }, 1000);
   };
   var stop = function stop(interval) {
     return clearInterval(interval);
@@ -88,19 +88,23 @@ function stopwatch(_ref) {
       clickCount = 0;
     }
   });
-  var split = function split(s) {
-    var res = {};
-    res.hours = s > 3599 ? prependZero(Math.floor(s / 3600) % 60) : prependZero(Math.floor(s / 3600));
-    res.minutes = s > 59 ? prependZero(Math.floor(s / 60) % 60) : prependZero(Math.floor(s / 60));
-    res.seconds = s > 59 ? seconds.textContent = prependZero(s % 60) : prependZero(s);
-    return "".concat(res.hours, ":").concat(res.minutes, ":").concat(res.seconds);
-  };
   splitBtn.addEventListener('click', function (e) {
     e.preventDefault();
     console.log(split(i));
   });
 }
+function prependZero(n) {
+  return n < 10 ? '0' + n : n;
+}
+function split(s) {
+  var res = {};
+  res.hours = s > 3599 ? prependZero(Math.floor(s / 3600) % 60) : prependZero(Math.floor(s / 3600));
+  res.minutes = s > 59 ? prependZero(Math.floor(s / 60) % 60) : prependZero(Math.floor(s / 60));
+  res.seconds = s > 59 ? seconds.textContent = prependZero(s % 60) : prependZero(s);
+  return "".concat(res.hours, ":").concat(res.minutes, ":").concat(res.seconds);
+}
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (stopwatch);
+
 
 /***/ }),
 

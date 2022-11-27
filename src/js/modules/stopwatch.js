@@ -1,3 +1,5 @@
+'use strict';
+
 function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigger, splitTrigger, resetTrigger}) {
     //stopwatch init
     const hours = document.querySelector(hoursSelector);
@@ -8,8 +10,6 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
     const resetBtn = document.querySelector(resetTrigger);
 
     let i = 0;
-
-    const prependZero = (n) => n < 10 ? '0' + n : n;
 
     const updateTime = (s) => {
         seconds.textContent = prependZero(s);
@@ -27,7 +27,7 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
         return setInterval(() => { 
             updateTime(i);
             i++; 
-        }, 100)
+        }, 1000)
     };
 
     const stop = (interval) => clearInterval(interval);
@@ -67,14 +67,6 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
         }
     });
 
-    const split = (s) => {
-        let res = {};
-        res.hours = s > 3599 ? prependZero(Math.floor(s/3600)%60) : prependZero(Math.floor(s/3600));
-        res.minutes = s > 59 ? prependZero(Math.floor(s/60)%60) : prependZero(Math.floor(s/60));
-        res.seconds = s > 59 ? seconds.textContent = prependZero(s%60) : prependZero(s);
-        return `${res.hours}:${res.minutes}:${res.seconds}`;
-    }
-
     splitBtn.addEventListener('click', e => {
         e.preventDefault();
         console.log(split(i));
@@ -82,4 +74,17 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
 
 }
 
+function prependZero (n) {
+    return n < 10 ? '0' + n : n;
+} 
+
+function split (s) {
+    let res = {};
+    res.hours = s > 3599 ? prependZero(Math.floor(s/3600)%60) : prependZero(Math.floor(s/3600));
+    res.minutes = s > 59 ? prependZero(Math.floor(s/60)%60) : prependZero(Math.floor(s/60));
+    res.seconds = s > 59 ? seconds.textContent = prependZero(s%60) : prependZero(s);
+    return `${res.hours}:${res.minutes}:${res.seconds}`;
+}
+
 export default stopwatch;
+export {split};
