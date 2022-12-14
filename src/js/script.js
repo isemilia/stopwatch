@@ -1,4 +1,5 @@
 import stopwatch from './modules/stopwatch';
+import notes from './modules/notes';
 
 'use strict';
 
@@ -11,4 +12,5 @@ document.addEventListener('DOMContentLoaded', () => {
         splitTrigger: '#split',
         resetTrigger: '#reset',        
     });
+    notes();
 })

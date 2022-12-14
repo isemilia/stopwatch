@@ -9,9 +9,16 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
     const splitBtn = document.querySelector(splitTrigger);
     const resetBtn = document.querySelector(resetTrigger);
 
-    let i = 0;
+    let i;
 
-    const updateTime = (s) => {
+    if (getSeconds()) {
+        i = getSeconds();
+        updateTime(i);
+    } else {
+        i = 0;
+    }
+
+    function updateTime (s) {
         seconds.textContent = prependZero(s);
         if (s > 59) {
             seconds.textContent = prependZero(s%60);
@@ -26,8 +33,9 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
     const start = () => {
         return setInterval(() => { 
             updateTime(i);
+            saveSeconds(i)
             i++; 
-        }, 1000)
+        }, 100)
     };
 
     const stop = (interval) => clearInterval(interval);
@@ -65,26 +73,44 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
             startBtn.textContent = 'Start';
             clickCount = 0;
         }
+        clearSeconds();
     });
 
     splitBtn.addEventListener('click', e => {
         e.preventDefault();
-        console.log(split(i));
+        // console.log(split(i));
+        document.dispatchEvent(new Event('split'));
     });
-
 }
 
 function prependZero (n) {
     return n < 10 ? '0' + n : n;
 } 
 
+// let timesplit = new Event('split');
+
 function split (s) {
     let res = {};
     res.hours = s > 3599 ? prependZero(Math.floor(s/3600)%60) : prependZero(Math.floor(s/3600));
     res.minutes = s > 59 ? prependZero(Math.floor(s/60)%60) : prependZero(Math.floor(s/60));
-    res.seconds = s > 59 ? seconds.textContent = prependZero(s%60) : prependZero(s);
-    return `${res.hours}:${res.minutes}:${res.seconds}`;
+    res.seconds = s > 59 ? prependZero(s%60) : prependZero(s);
+    // return `${res.hours}:${res.minutes}:${res.seconds}`;
+    return res;
+}
+
+// save seconds in local storage
+function saveSeconds(s) {
+    localStorage.setItem('seconds', s);
+}
+// get seconds from local storage
+function getSeconds() {
+    return localStorage.getItem('seconds') ? localStorage.getItem('seconds') : 0;
+}
+//clear seconds
+function clearSeconds() {
+    localStorage.removeItem('seconds');
 }
 
 export default stopwatch;
 export {split};
+export {getSeconds};
