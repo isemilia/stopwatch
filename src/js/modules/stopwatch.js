@@ -68,6 +68,7 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
 
     resetBtn.addEventListener('click', (e) => {
         e.preventDefault();
+        document.dispatchEvent(new Event('resetTimer'));
         reset(interval);
         if (startBtn.textContent === 'Stop') {
             startBtn.textContent = 'Start';

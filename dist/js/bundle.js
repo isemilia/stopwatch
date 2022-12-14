@@ -110,6 +110,9 @@ function renderLocalNotes() {
     document.querySelector('.records-wrap').append(createNoteElement(note.time, note.comment, note.gap));
   });
 }
+function scrollToBottom(containerSelector) {
+  document.querySelector(containerSelector).scrollTop = document.querySelector(containerSelector).scrollHeight;
+}
 function notes() {
   var noteItems = [];
   if (localStorage.getItem('note-items')) {
@@ -118,6 +121,7 @@ function notes() {
     console.log(noteItems);
     console.log(savedItems);
     renderLocalNotes();
+    scrollToBottom('.records-wrap');
   }
   document.addEventListener('split', function (e) {
     var time = (0,_stopwatch__WEBPACK_IMPORTED_MODULE_16__.split)((0,_stopwatch__WEBPACK_IMPORTED_MODULE_16__.getSeconds)());
@@ -129,7 +133,12 @@ function notes() {
     noteItems.forEach(function (note, i) {
       document.querySelector('.records-wrap').append(createNoteElement(note.time, note.comment, note.gap));
     });
-    document.querySelector('.records-wrap').scrollTop = document.querySelector('.records-wrap').scrollHeight;
+    scrollToBottom('.records-wrap');
+  });
+  document.addEventListener('resetTimer', function (e) {
+    noteItems = [];
+    localStorage.removeItem('note-items');
+    document.querySelector('.records-wrap').innerHTML = '';
   });
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (notes);
@@ -222,6 +231,7 @@ function stopwatch(_ref) {
   });
   resetBtn.addEventListener('click', function (e) {
     e.preventDefault();
+    document.dispatchEvent(new Event('resetTimer'));
     reset(interval);
     if (startBtn.textContent === 'Stop') {
       startBtn.textContent = 'Start';

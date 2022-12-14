@@ -66,6 +66,10 @@ function renderLocalNotes() {
     })
 }
 
+function scrollToBottom(containerSelector) {
+    document.querySelector(containerSelector).scrollTop = document.querySelector(containerSelector).scrollHeight;
+}
+
 function notes() {
     let noteItems = [];
     if (localStorage.getItem('note-items')) {
@@ -74,6 +78,7 @@ function notes() {
         console.log(noteItems);
         console.log(savedItems);
         renderLocalNotes();
+        scrollToBottom('.records-wrap');
     }
     document.addEventListener('split', (e) => {
         const time = split(getSeconds());
@@ -86,7 +91,12 @@ function notes() {
             document.querySelector('.records-wrap').append(createNoteElement(note.time, note.comment, note.gap));
         });
 
-        document.querySelector('.records-wrap').scrollTop = document.querySelector('.records-wrap').scrollHeight;
+        scrollToBottom('.records-wrap');
+    });
+    document.addEventListener('resetTimer', (e) => {
+        noteItems = [];
+        localStorage.removeItem('note-items');
+        document.querySelector('.records-wrap').innerHTML = '';
     });
 }
 
