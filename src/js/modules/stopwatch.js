@@ -31,6 +31,8 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
     }
 
     const start = () => {
+        i++;
+        updateTime(i);
         return setInterval(() => { 
             updateTime(i);
             saveSeconds(i)

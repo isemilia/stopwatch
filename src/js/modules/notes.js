@@ -100,10 +100,10 @@ function setNoteIDs(element, index, noteAttr, inputAttr, removeAttr) {
     element.querySelector(`[${removeAttr}]`).setAttribute(removeAttr, index);
 }
 
-function createAndAppendNote(note, i, parentselector) {
+function createAndAppendNote(note, i, parentSelector) {
     const noteElem = createNoteElement(note.time, note.comment, note.gap);
     setNoteIDs(noteElem, i, 'data-note-id', 'data-input-id', 'data-remove-item');
-    document.querySelector(parentselector).append(noteElem);
+    document.querySelector(parentSelector).append(noteElem);
 }
 
 function clearNotes(parentSelector, savedNotesKey) {
@@ -140,6 +140,8 @@ function setNoteGaps() {
             gapFormatted = gapFormatted.replace(/[a-zA-Z]/gi, '<span>$&</span>')
             item.gap = gapFormatted;
             // console.log(`currrent: ${current}, prev: ${prev}`);
+        } else {
+            item.gap = '';
         }
     });
 }

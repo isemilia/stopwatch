@@ -149,10 +149,10 @@ function setNoteIDs(element, index, noteAttr, inputAttr, removeAttr) {
   element.querySelector('input').setAttribute(inputAttr, index);
   element.querySelector("[".concat(removeAttr, "]")).setAttribute(removeAttr, index);
 }
-function createAndAppendNote(note, i, parentselector) {
+function createAndAppendNote(note, i, parentSelector) {
   var noteElem = createNoteElement(note.time, note.comment, note.gap);
   setNoteIDs(noteElem, i, 'data-note-id', 'data-input-id', 'data-remove-item');
-  document.querySelector(parentselector).append(noteElem);
+  document.querySelector(parentSelector).append(noteElem);
 }
 function clearNotes(parentSelector, savedNotesKey) {
   noteItems = [];
@@ -186,10 +186,11 @@ function setNoteGaps() {
       gapFormatted = gapFormatted.replace(/[a-zA-Z]/gi, '<span>$&</span>');
       item.gap = gapFormatted;
       // console.log(`currrent: ${current}, prev: ${prev}`);
+    } else {
+      item.gap = '';
     }
   });
 }
-
 var noteItems = [];
 var recordsParentSelector = '.records-wrap';
 var savedNotesKey = 'note-items';
@@ -281,6 +282,8 @@ function stopwatch(_ref) {
     }
   }
   var start = function start() {
+    i++;
+    updateTime(i);
     return setInterval(function () {
       updateTime(i);
       saveSeconds(i);
