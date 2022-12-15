@@ -5243,6 +5243,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 'use strict';
+console.log('%cSpecial thanks to Ayush <3', 'color: red; font-size: 1.2em;');
 document.addEventListener('DOMContentLoaded', function () {
   (0,_modules_stopwatch__WEBPACK_IMPORTED_MODULE_0__["default"])({
     hoursSelector: '#hours',
