@@ -23,7 +23,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 1.5rem;
+            gap: 1.2em;
             width: 100%;
             padding: .75rem clamp(.5rem, 3vw, 1rem);
             margin-right: 0.43rem;
@@ -38,6 +38,7 @@
             color: inherit;
             max-width: 100%;
             width: 100%;
+            font-size: .86em;
             &:focus {
                 border: 1px solid var(--clr-300);
                 border-radius: 4px;
