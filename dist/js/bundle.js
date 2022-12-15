@@ -288,7 +288,7 @@ function stopwatch(_ref) {
       updateTime(i);
       saveSeconds(i);
       i++;
-    }, 100);
+    }, 1000);
   };
   var stop = function stop(interval) {
     return clearInterval(interval);
