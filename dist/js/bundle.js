@@ -147,6 +147,7 @@ function createAndAppendNote(note, i, parentselector) {
 var noteItems = [];
 var recordsParentSelector = '.records-wrap';
 var savedNotesKey = 'note-items';
+var removeAllBtnSelector = '[data-remove-all]';
 function notes() {
   var recordsWrap = document.querySelector(recordsParentSelector);
   if (localStorage.getItem(savedNotesKey)) {
@@ -176,6 +177,13 @@ function notes() {
     recordsWrap.innerHTML = '';
   });
   removeItems(recordsParentSelector, 'data-remove-item', savedNotesKey);
+  var removeAllBtn = document.querySelector(removeAllBtnSelector);
+  removeAllBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    noteItems = [];
+    localStorage.removeItem(savedNotesKey);
+    recordsWrap.innerHTML = '';
+  });
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (notes);
 

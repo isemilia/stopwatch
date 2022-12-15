@@ -106,6 +106,7 @@ function createAndAppendNote(note, i, parentselector) {
 let noteItems = [];
 const recordsParentSelector = '.records-wrap';
 const savedNotesKey = 'note-items';
+const removeAllBtnSelector = '[data-remove-all]';
 
 function notes() {
     const recordsWrap = document.querySelector(recordsParentSelector);
@@ -140,6 +141,14 @@ function notes() {
     });
 
     removeItems(recordsParentSelector, 'data-remove-item', savedNotesKey);
+
+    const removeAllBtn = document.querySelector(removeAllBtnSelector);
+    removeAllBtn.addEventListener('click', e => {
+        e.preventDefault();
+        noteItems = [];
+        localStorage.removeItem(savedNotesKey);
+        recordsWrap.innerHTML = '';
+    });
 }
 
 export default notes;
