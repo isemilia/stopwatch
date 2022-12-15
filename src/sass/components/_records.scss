@@ -49,6 +49,9 @@
         }
         &-info {
             white-space: nowrap;
+            span {
+                font-size: .68em;
+            }
         }
         &-remove {
             svg {

@@ -137,6 +137,7 @@ function setNoteGaps() {
             if (+gap.seconds) {
                 gapFormatted += `${gap.seconds}s`;
             }
+            gapFormatted = gapFormatted.replace(/[a-zA-Z]/gi, '<span>$&</span>')
             item.gap = gapFormatted;
             // console.log(`currrent: ${current}, prev: ${prev}`);
         }
