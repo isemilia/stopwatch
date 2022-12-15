@@ -3,6 +3,23 @@
     &-wrap {
         max-height: var(--max-height);
         overflow-y: auto;
+        &:empty {
+            display: grid;
+            place-content: center;
+            &::before {
+                content: 'Looks like your list is empty. \AStart adding items!';
+                display: inline-block;
+                max-width: max-content;
+                white-space: pre;
+                text-align: center;
+                color: #FFF;
+                font-size: clamp(1rem, 3vw, 1.25rem);
+                font-weight: 500;
+            }
+            & ~ .records-btn {
+                display: none;
+            }
+        }
     }
     &-item {
         display: flex;
