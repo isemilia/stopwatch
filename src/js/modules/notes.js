@@ -5,11 +5,12 @@ import {getSeconds} from './stopwatch';
 
 class Note {
     static id = 0;
-    constructor(time, comment = '', gap = '', parentSelector) {
+    constructor(time, comment = '', gap = '', parentSelector, seconds) {
         this.time = time;
         this.comment = comment;
         this.gap = gap;
         this.parent = parentSelector;
+        this.timeInSeconds = seconds;
     }
     render() {
         const item = `
@@ -85,9 +86,11 @@ function removeItems(parentSelector, removeAttr, savedNotesKey) {
 function updateNotes(savedNotes) {
     const savedNoteItems = JSON.parse(localStorage.getItem(savedNotes));
     noteItems = [...noteItems, ...savedNoteItems];
+    setNoteGaps();
 }
 
 function updateSavedNotes(savedNotes) {
+    setNoteGaps();
     localStorage.setItem(savedNotes, JSON.stringify(noteItems));
 }
 
@@ -117,6 +120,29 @@ function initRemoveAll(btnSelector, parentSelector, savedNotesKey) {
     });
 }
 
+function setNoteGaps() {
+    noteItems.forEach((item, i) => {
+        if (i > 0) {
+            const current = item.timeInSeconds;
+            const prev = noteItems[i-1].timeInSeconds;
+            const gapInSeconds = Number(current) - Number(prev);
+            const gap = split(gapInSeconds);
+            let gapFormatted = '';
+            if (+gap.hours) {
+                gapFormatted += `${gap.hours}h`;
+            }
+            if (+gap.minutes) {
+                gapFormatted += `${gap.minutes}m`;
+            }
+            if (+gap.seconds) {
+                gapFormatted += `${gap.seconds}s`;
+            }
+            item.gap = gapFormatted;
+            // console.log(`currrent: ${current}, prev: ${prev}`);
+        }
+    });
+}
+
 let noteItems = [];
 const recordsParentSelector = '.records-wrap';
 const savedNotesKey = 'note-items';
@@ -132,7 +158,7 @@ function notes() {
 
     document.addEventListener('timerSplit', (e) => {
         const time = split(getSeconds());
-        const newNote = new Note(time, '', '', recordsParentSelector);
+        const newNote = new Note(time, '', '', recordsParentSelector, getSeconds());
         noteItems.push(newNote);
         updateSavedNotes(savedNotesKey);
         recordsWrap.innerHTML = '';
@@ -154,7 +180,10 @@ function notes() {
 
     removeItems(recordsParentSelector, 'data-remove-item', savedNotesKey);
 
-    initRemoveAll(removeAllBtnSelector, recordsParentSelector, savedNotesKey)
+    initRemoveAll(removeAllBtnSelector, recordsParentSelector, savedNotesKey);
+
+    // TODO: get timeInSeconds of each note item
+    
 }
 
 export default notes;

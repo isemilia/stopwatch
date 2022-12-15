@@ -35,7 +35,7 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
             updateTime(i);
             saveSeconds(i)
             i++; 
-        }, 1000)
+        }, 100)
     };
 
     const stop = (interval) => clearInterval(interval);
