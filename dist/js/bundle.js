@@ -102,43 +102,56 @@ function createNoteElement(time, comment, gap) {
   tempWrap.innerHTML = item;
   return tempWrap.firstElementChild;
 }
-function renderLocalNotes() {
-  var savedItems = JSON.parse(localStorage.getItem('note-items'));
-  savedItems.forEach(function (note, i) {
+function renderLocalNotes(parentSelector) {
+  var savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
+  savedNoteItems.forEach(function (note, i) {
     // console.log(note);
     // console.log(createNoteElement(note.time, note.comment, note.gap));
-    document.querySelector('.records-wrap').append(createNoteElement(note.time, note.comment, note.gap));
+    var noteElem = createNoteElement(note.time, note.comment, note.gap);
+    noteElem.setAttribute('data-note-id', i);
+    noteElem.querySelector('input').setAttribute('data-input-id', i);
+    document.querySelector(parentSelector).append(noteElem);
   });
 }
 function scrollToBottom(containerSelector) {
   document.querySelector(containerSelector).scrollTop = document.querySelector(containerSelector).scrollHeight;
 }
 function notes() {
+  var recordsWrap = document.querySelector('.records-wrap');
   var noteItems = [];
   if (localStorage.getItem('note-items')) {
-    var savedItems = JSON.parse(localStorage.getItem('note-items'));
-    noteItems = [].concat(_toConsumableArray(noteItems), _toConsumableArray(savedItems));
-    console.log(noteItems);
-    console.log(savedItems);
-    renderLocalNotes();
+    var savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
+    noteItems = [].concat(_toConsumableArray(noteItems), _toConsumableArray(savedNoteItems));
+    // console.log(noteItems);
+    console.log(savedNoteItems);
+    renderLocalNotes('.records-wrap');
     scrollToBottom('.records-wrap');
   }
-  document.addEventListener('split', function (e) {
+  document.addEventListener('timerSplit', function (e) {
     var time = (0,_stopwatch__WEBPACK_IMPORTED_MODULE_16__.split)((0,_stopwatch__WEBPACK_IMPORTED_MODULE_16__.getSeconds)());
     var newNote = new Note(time, '', '', '.records-wrap');
     noteItems.push(newNote);
     localStorage.setItem('note-items', JSON.stringify(noteItems));
-    // newNote.render();
-    document.querySelector('.records-wrap').innerHTML = '';
+    recordsWrap.innerHTML = '';
     noteItems.forEach(function (note, i) {
-      document.querySelector('.records-wrap').append(createNoteElement(note.time, note.comment, note.gap));
+      var noteElem = createNoteElement(note.time, note.comment, note.gap);
+      noteElem.setAttribute('data-note-id', i);
+      noteElem.querySelector('input').setAttribute('data-input-id', i);
+      recordsWrap.append(noteElem);
     });
     scrollToBottom('.records-wrap');
   });
-  document.addEventListener('resetTimer', function (e) {
+  recordsWrap.addEventListener('input', function (e) {
+    console.log(e.target);
+    var inputID = e.target.getAttribute('data-input-id');
+    noteItems[inputID].comment = e.target.value;
+    console.log(noteItems[inputID]);
+    localStorage.setItem('note-items', JSON.stringify(noteItems));
+  });
+  document.addEventListener('timerReset', function (e) {
     noteItems = [];
     localStorage.removeItem('note-items');
-    document.querySelector('.records-wrap').innerHTML = '';
+    recordsWrap.innerHTML = '';
   });
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (notes);
@@ -231,7 +244,7 @@ function stopwatch(_ref) {
   });
   resetBtn.addEventListener('click', function (e) {
     e.preventDefault();
-    document.dispatchEvent(new Event('resetTimer'));
+    document.dispatchEvent(new Event('timerReset'));
     reset(interval);
     if (startBtn.textContent === 'Stop') {
       startBtn.textContent = 'Start';
@@ -242,7 +255,7 @@ function stopwatch(_ref) {
   splitBtn.addEventListener('click', function (e) {
     e.preventDefault();
     // console.log(split(i));
-    document.dispatchEvent(new Event('split'));
+    document.dispatchEvent(new Event('timerSplit'));
   });
 }
 function prependZero(n) {

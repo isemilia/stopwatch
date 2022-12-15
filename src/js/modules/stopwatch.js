@@ -68,7 +68,7 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
 
     resetBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        document.dispatchEvent(new Event('resetTimer'));
+        document.dispatchEvent(new Event('timerReset'));
         reset(interval);
         if (startBtn.textContent === 'Stop') {
             startBtn.textContent = 'Start';
@@ -80,7 +80,7 @@ function stopwatch({hoursSelector, minutesSelector, secondsSelector, startTrigge
     splitBtn.addEventListener('click', e => {
         e.preventDefault();
         // console.log(split(i));
-        document.dispatchEvent(new Event('split'));
+        document.dispatchEvent(new Event('timerSplit'));
     });
 }
 

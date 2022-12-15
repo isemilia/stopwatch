@@ -57,12 +57,15 @@ function createNoteElement(time, comment, gap) {
     return tempWrap.firstElementChild;
 }
 
-function renderLocalNotes() {
-    const savedItems = JSON.parse(localStorage.getItem('note-items'));
-    savedItems.forEach((note, i) => {
+function renderLocalNotes(parentSelector) {
+    const savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
+    savedNoteItems.forEach((note, i) => {
         // console.log(note);
         // console.log(createNoteElement(note.time, note.comment, note.gap));
-        document.querySelector('.records-wrap').append(createNoteElement(note.time, note.comment, note.gap));
+        const noteElem = createNoteElement(note.time, note.comment, note.gap);
+        noteElem.setAttribute('data-note-id', i);
+        noteElem.querySelector('input').setAttribute('data-input-id', i);
+        document.querySelector(parentSelector).append(noteElem);
     })
 }
 
@@ -71,32 +74,44 @@ function scrollToBottom(containerSelector) {
 }
 
 function notes() {
+    const recordsWrap = document.querySelector('.records-wrap');
     let noteItems = [];
     if (localStorage.getItem('note-items')) {
-        const savedItems = JSON.parse(localStorage.getItem('note-items'));
-        noteItems = [...noteItems, ...savedItems];
-        console.log(noteItems);
-        console.log(savedItems);
-        renderLocalNotes();
+        const savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
+        noteItems = [...noteItems, ...savedNoteItems];
+        // console.log(noteItems);
+        console.log(savedNoteItems);
+        renderLocalNotes('.records-wrap');
         scrollToBottom('.records-wrap');
     }
-    document.addEventListener('split', (e) => {
+
+    document.addEventListener('timerSplit', (e) => {
         const time = split(getSeconds());
         const newNote = new Note(time, '', '', '.records-wrap');
         noteItems.push(newNote);
         localStorage.setItem('note-items', JSON.stringify(noteItems));
-        // newNote.render();
-        document.querySelector('.records-wrap').innerHTML = '';
+        recordsWrap.innerHTML = '';
         noteItems.forEach((note, i) => {
-            document.querySelector('.records-wrap').append(createNoteElement(note.time, note.comment, note.gap));
+            const noteElem = createNoteElement(note.time, note.comment, note.gap);
+            noteElem.setAttribute('data-note-id', i);
+            noteElem.querySelector('input').setAttribute('data-input-id', i);
+            recordsWrap.append(noteElem);
         });
-
         scrollToBottom('.records-wrap');
     });
-    document.addEventListener('resetTimer', (e) => {
+
+    recordsWrap.addEventListener('input', e => {
+        console.log(e.target);
+        const inputID = e.target.getAttribute('data-input-id');
+        noteItems[inputID].comment = e.target.value;
+        console.log(noteItems[inputID]);
+        localStorage.setItem('note-items', JSON.stringify(noteItems));
+    })
+
+    document.addEventListener('timerReset', (e) => {
         noteItems = [];
         localStorage.removeItem('note-items');
-        document.querySelector('.records-wrap').innerHTML = '';
+        recordsWrap.innerHTML = '';
     });
 }
 
