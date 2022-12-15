@@ -105,8 +105,8 @@ function createNoteElement(time, comment, gap) {
   tempWrap.innerHTML = item;
   return tempWrap.firstElementChild;
 }
-function renderLocalNotes(parentSelector) {
-  var savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
+function renderLocalNotes(parentSelector, savedNotesKey) {
+  var savedNoteItems = JSON.parse(localStorage.getItem(savedNotesKey));
   savedNoteItems.forEach(function (note, i) {
     createAndAppendNote(note, i, parentSelector);
   });
@@ -114,17 +114,16 @@ function renderLocalNotes(parentSelector) {
 function scrollToBottom(containerSelector) {
   document.querySelector(containerSelector).scrollTop = document.querySelector(containerSelector).scrollHeight;
 }
-function removeItems(parentSelector) {
+function removeItems(parentSelector, removeAttr, savedNotesKey) {
   var parent = document.querySelector(parentSelector);
   parent.addEventListener('click', function (e) {
     e.preventDefault();
-    if (e.target.matches('[data-remove-item]')) {
-      console.log(e.target);
-      var itemID = e.target.getAttribute('data-remove-item');
+    if (e.target.matches("[".concat(removeAttr, "]"))) {
+      var itemID = e.target.getAttribute(removeAttr);
       noteItems.splice(itemID, 1);
-      updateSavedNotes('note-items');
+      updateSavedNotes(savedNotesKey);
       parent.innerHTML = '';
-      renderLocalNotes(parentSelector);
+      renderLocalNotes(parentSelector, savedNotesKey);
     }
   });
 }
@@ -147,19 +146,19 @@ function createAndAppendNote(note, i, parentselector) {
 }
 var noteItems = [];
 var recordsParentSelector = '.records-wrap';
-var savedNotes = 'note-items';
+var savedNotesKey = 'note-items';
 function notes() {
   var recordsWrap = document.querySelector(recordsParentSelector);
-  if (localStorage.getItem('note-items')) {
-    updateNotes('note-items');
-    renderLocalNotes(recordsParentSelector);
+  if (localStorage.getItem(savedNotesKey)) {
+    updateNotes(savedNotesKey);
+    renderLocalNotes(recordsParentSelector, savedNotesKey);
     scrollToBottom(recordsParentSelector);
   }
   document.addEventListener('timerSplit', function (e) {
     var time = (0,_stopwatch__WEBPACK_IMPORTED_MODULE_17__.split)((0,_stopwatch__WEBPACK_IMPORTED_MODULE_17__.getSeconds)());
     var newNote = new Note(time, '', '', recordsParentSelector);
     noteItems.push(newNote);
-    updateSavedNotes('note-items');
+    updateSavedNotes(savedNotesKey);
     recordsWrap.innerHTML = '';
     noteItems.forEach(function (note, i) {
       createAndAppendNote(note, i, recordsParentSelector);
@@ -169,14 +168,14 @@ function notes() {
   recordsWrap.addEventListener('input', function (e) {
     var inputID = e.target.getAttribute('data-input-id');
     noteItems[inputID].comment = e.target.value;
-    updateSavedNotes('note-items');
+    updateSavedNotes(savedNotesKey);
   });
   document.addEventListener('timerReset', function (e) {
     noteItems = [];
-    localStorage.removeItem('note-items');
+    localStorage.removeItem(savedNotesKey);
     recordsWrap.innerHTML = '';
   });
-  removeItems(recordsParentSelector);
+  removeItems(recordsParentSelector, 'data-remove-item', savedNotesKey);
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (notes);
 

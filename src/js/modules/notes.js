@@ -57,8 +57,8 @@ function createNoteElement(time, comment, gap) {
     return tempWrap.firstElementChild;
 }
 
-function renderLocalNotes(parentSelector) {
-    const savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
+function renderLocalNotes(parentSelector, savedNotesKey) {
+    const savedNoteItems = JSON.parse(localStorage.getItem(savedNotesKey));
     savedNoteItems.forEach((note, i) => {
         createAndAppendNote(note, i, parentSelector);
     })
@@ -68,17 +68,16 @@ function scrollToBottom(containerSelector) {
     document.querySelector(containerSelector).scrollTop = document.querySelector(containerSelector).scrollHeight;
 }
 
-function removeItems(parentSelector) {
+function removeItems(parentSelector, removeAttr, savedNotesKey) {
     const parent = document.querySelector(parentSelector);
     parent.addEventListener('click', e => {
         e.preventDefault();
-        if (e.target.matches('[data-remove-item]')) {
-            console.log(e.target);
-            const itemID = e.target.getAttribute('data-remove-item');
+        if (e.target.matches(`[${removeAttr}]`)) {
+            const itemID = e.target.getAttribute(removeAttr);
             noteItems.splice(itemID, 1);
-            updateSavedNotes('note-items');
+            updateSavedNotes(savedNotesKey);
             parent.innerHTML = '';
-            renderLocalNotes(parentSelector);
+            renderLocalNotes(parentSelector, savedNotesKey);
         }
     });
 }
@@ -106,13 +105,13 @@ function createAndAppendNote(note, i, parentselector) {
 
 let noteItems = [];
 const recordsParentSelector = '.records-wrap';
-const savedNotes = 'note-items';
+const savedNotesKey = 'note-items';
 
 function notes() {
     const recordsWrap = document.querySelector(recordsParentSelector);
-    if (localStorage.getItem('note-items')) {
-        updateNotes('note-items');
-        renderLocalNotes(recordsParentSelector);
+    if (localStorage.getItem(savedNotesKey)) {
+        updateNotes(savedNotesKey);
+        renderLocalNotes(recordsParentSelector, savedNotesKey);
         scrollToBottom(recordsParentSelector);
     }
 
@@ -120,7 +119,7 @@ function notes() {
         const time = split(getSeconds());
         const newNote = new Note(time, '', '', recordsParentSelector);
         noteItems.push(newNote);
-        updateSavedNotes('note-items');
+        updateSavedNotes(savedNotesKey);
         recordsWrap.innerHTML = '';
         noteItems.forEach((note, i) => {
             createAndAppendNote(note, i, recordsParentSelector);
@@ -131,16 +130,16 @@ function notes() {
     recordsWrap.addEventListener('input', e => {
         const inputID = e.target.getAttribute('data-input-id');
         noteItems[inputID].comment = e.target.value;
-        updateSavedNotes('note-items');
+        updateSavedNotes(savedNotesKey);
     });
 
     document.addEventListener('timerReset', (e) => {
         noteItems = [];
-        localStorage.removeItem('note-items');
+        localStorage.removeItem(savedNotesKey);
         recordsWrap.innerHTML = '';
     });
 
-    removeItems(recordsParentSelector);
+    removeItems(recordsParentSelector, 'data-remove-item', savedNotesKey);
 }
 
 export default notes;
