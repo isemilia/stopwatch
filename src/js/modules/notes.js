@@ -103,6 +103,20 @@ function createAndAppendNote(note, i, parentselector) {
     document.querySelector(parentselector).append(noteElem);
 }
 
+function clearNotes(parentSelector, savedNotesKey) {
+    noteItems = [];
+    localStorage.removeItem(savedNotesKey);
+    document.querySelector(parentSelector).innerHTML = '';
+}
+
+function initRemoveAll(btnSelector, parentSelector, savedNotesKey) {
+    const removeAllBtn = document.querySelector(btnSelector);
+    removeAllBtn.addEventListener('click', e => {
+        e.preventDefault();
+        clearNotes(parentSelector, savedNotesKey);
+    });
+}
+
 let noteItems = [];
 const recordsParentSelector = '.records-wrap';
 const savedNotesKey = 'note-items';
@@ -135,20 +149,12 @@ function notes() {
     });
 
     document.addEventListener('timerReset', (e) => {
-        noteItems = [];
-        localStorage.removeItem(savedNotesKey);
-        recordsWrap.innerHTML = '';
+        clearNotes(recordsParentSelector, savedNotesKey);
     });
 
     removeItems(recordsParentSelector, 'data-remove-item', savedNotesKey);
 
-    const removeAllBtn = document.querySelector(removeAllBtnSelector);
-    removeAllBtn.addEventListener('click', e => {
-        e.preventDefault();
-        noteItems = [];
-        localStorage.removeItem(savedNotesKey);
-        recordsWrap.innerHTML = '';
-    });
+    initRemoveAll(removeAllBtnSelector, recordsParentSelector, savedNotesKey)
 }
 
 export default notes;

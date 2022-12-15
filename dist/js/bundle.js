@@ -144,6 +144,18 @@ function createAndAppendNote(note, i, parentselector) {
   setNoteIDs(noteElem, i, 'data-note-id', 'data-input-id', 'data-remove-item');
   document.querySelector(parentselector).append(noteElem);
 }
+function clearNotes(parentSelector, savedNotesKey) {
+  noteItems = [];
+  localStorage.removeItem(savedNotesKey);
+  document.querySelector(parentSelector).innerHTML = '';
+}
+function initRemoveAll(btnSelector, parentSelector, savedNotesKey) {
+  var removeAllBtn = document.querySelector(btnSelector);
+  removeAllBtn.addEventListener('click', function (e) {
+    e.preventDefault();
+    clearNotes(parentSelector, savedNotesKey);
+  });
+}
 var noteItems = [];
 var recordsParentSelector = '.records-wrap';
 var savedNotesKey = 'note-items';
@@ -172,18 +184,10 @@ function notes() {
     updateSavedNotes(savedNotesKey);
   });
   document.addEventListener('timerReset', function (e) {
-    noteItems = [];
-    localStorage.removeItem(savedNotesKey);
-    recordsWrap.innerHTML = '';
+    clearNotes(recordsParentSelector, savedNotesKey);
   });
   removeItems(recordsParentSelector, 'data-remove-item', savedNotesKey);
-  var removeAllBtn = document.querySelector(removeAllBtnSelector);
-  removeAllBtn.addEventListener('click', function (e) {
-    e.preventDefault();
-    noteItems = [];
-    localStorage.removeItem(savedNotesKey);
-    recordsWrap.innerHTML = '';
-  });
+  initRemoveAll(removeAllBtnSelector, recordsParentSelector, savedNotesKey);
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (notes);
 
