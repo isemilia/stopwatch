@@ -60,13 +60,7 @@ function createNoteElement(time, comment, gap) {
 function renderLocalNotes(parentSelector) {
     const savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
     savedNoteItems.forEach((note, i) => {
-        // console.log(note);
-        // console.log(createNoteElement(note.time, note.comment, note.gap));
-        const noteElem = createNoteElement(note.time, note.comment, note.gap);
-        noteElem.setAttribute('data-note-id', i);
-        noteElem.querySelector('input').setAttribute('data-input-id', i);
-        noteElem.querySelector('[data-remove-item]').setAttribute('data-remove-item', i);
-        document.querySelector(parentSelector).append(noteElem);
+        createAndAppendNote(note, i, parentSelector);
     })
 }
 
@@ -74,7 +68,7 @@ function scrollToBottom(containerSelector) {
     document.querySelector(containerSelector).scrollTop = document.querySelector(containerSelector).scrollHeight;
 }
 
-function removeItem(parentSelector) {
+function removeItems(parentSelector) {
     const parent = document.querySelector(parentSelector);
     parent.addEventListener('click', e => {
         e.preventDefault();
@@ -82,47 +76,63 @@ function removeItem(parentSelector) {
             console.log(e.target);
             const itemID = e.target.getAttribute('data-remove-item');
             noteItems.splice(itemID, 1);
-            localStorage.setItem('note-items', JSON.stringify(noteItems));
+            updateSavedNotes('note-items');
             parent.innerHTML = '';
             renderLocalNotes(parentSelector);
         }
     });
 }
 
+function updateNotes(savedNotes) {
+    const savedNoteItems = JSON.parse(localStorage.getItem(savedNotes));
+    noteItems = [...noteItems, ...savedNoteItems];
+}
+
+function updateSavedNotes(savedNotes) {
+    localStorage.setItem(savedNotes, JSON.stringify(noteItems));
+}
+
+function setNoteIDs(element, index, noteAttr, inputAttr, removeAttr) {
+    element.setAttribute(noteAttr, index);
+    element.querySelector('input').setAttribute(inputAttr, index);
+    element.querySelector(`[${removeAttr}]`).setAttribute(removeAttr, index);
+}
+
+function createAndAppendNote(note, i, parentselector) {
+    const noteElem = createNoteElement(note.time, note.comment, note.gap);
+    setNoteIDs(noteElem, i, 'data-note-id', 'data-input-id', 'data-remove-item');
+    document.querySelector(parentselector).append(noteElem);
+}
+
 let noteItems = [];
+const recordsParentSelector = '.records-wrap';
+const savedNotes = 'note-items';
 
 function notes() {
-    const recordsWrap = document.querySelector('.records-wrap');
+    const recordsWrap = document.querySelector(recordsParentSelector);
     if (localStorage.getItem('note-items')) {
-        const savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
-        noteItems = [...noteItems, ...savedNoteItems];
-        // console.log(noteItems);
-        console.log(savedNoteItems);
-        renderLocalNotes('.records-wrap');
-        scrollToBottom('.records-wrap');
+        updateNotes('note-items');
+        renderLocalNotes(recordsParentSelector);
+        scrollToBottom(recordsParentSelector);
     }
 
     document.addEventListener('timerSplit', (e) => {
         const time = split(getSeconds());
-        const newNote = new Note(time, '', '', '.records-wrap');
+        const newNote = new Note(time, '', '', recordsParentSelector);
         noteItems.push(newNote);
-        localStorage.setItem('note-items', JSON.stringify(noteItems));
+        updateSavedNotes('note-items');
         recordsWrap.innerHTML = '';
         noteItems.forEach((note, i) => {
-            const noteElem = createNoteElement(note.time, note.comment, note.gap);
-            noteElem.setAttribute('data-note-id', i);
-            noteElem.querySelector('input').setAttribute('data-input-id', i);
-            noteElem.querySelector('[data-remove-item]').setAttribute('data-remove-item', i);
-            recordsWrap.append(noteElem);
+            createAndAppendNote(note, i, recordsParentSelector);
         });
-        scrollToBottom('.records-wrap');
+        scrollToBottom(recordsParentSelector);
     });
 
     recordsWrap.addEventListener('input', e => {
         const inputID = e.target.getAttribute('data-input-id');
         noteItems[inputID].comment = e.target.value;
-        localStorage.setItem('note-items', JSON.stringify(noteItems));
-    })
+        updateSavedNotes('note-items');
+    });
 
     document.addEventListener('timerReset', (e) => {
         noteItems = [];
@@ -130,7 +140,7 @@ function notes() {
         recordsWrap.innerHTML = '';
     });
 
-    removeItem('.records-wrap');
+    removeItems(recordsParentSelector);
 }
 
 export default notes;

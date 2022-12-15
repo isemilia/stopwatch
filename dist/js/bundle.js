@@ -108,19 +108,13 @@ function createNoteElement(time, comment, gap) {
 function renderLocalNotes(parentSelector) {
   var savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
   savedNoteItems.forEach(function (note, i) {
-    // console.log(note);
-    // console.log(createNoteElement(note.time, note.comment, note.gap));
-    var noteElem = createNoteElement(note.time, note.comment, note.gap);
-    noteElem.setAttribute('data-note-id', i);
-    noteElem.querySelector('input').setAttribute('data-input-id', i);
-    noteElem.querySelector('[data-remove-item]').setAttribute('data-remove-item', i);
-    document.querySelector(parentSelector).append(noteElem);
+    createAndAppendNote(note, i, parentSelector);
   });
 }
 function scrollToBottom(containerSelector) {
   document.querySelector(containerSelector).scrollTop = document.querySelector(containerSelector).scrollHeight;
 }
-function removeItem(parentSelector) {
+function removeItems(parentSelector) {
   var parent = document.querySelector(parentSelector);
   parent.addEventListener('click', function (e) {
     e.preventDefault();
@@ -128,49 +122,61 @@ function removeItem(parentSelector) {
       console.log(e.target);
       var itemID = e.target.getAttribute('data-remove-item');
       noteItems.splice(itemID, 1);
-      localStorage.setItem('note-items', JSON.stringify(noteItems));
+      updateSavedNotes('note-items');
       parent.innerHTML = '';
       renderLocalNotes(parentSelector);
     }
   });
 }
+function updateNotes(savedNotes) {
+  var savedNoteItems = JSON.parse(localStorage.getItem(savedNotes));
+  noteItems = [].concat(_toConsumableArray(noteItems), _toConsumableArray(savedNoteItems));
+}
+function updateSavedNotes(savedNotes) {
+  localStorage.setItem(savedNotes, JSON.stringify(noteItems));
+}
+function setNoteIDs(element, index, noteAttr, inputAttr, removeAttr) {
+  element.setAttribute(noteAttr, index);
+  element.querySelector('input').setAttribute(inputAttr, index);
+  element.querySelector("[".concat(removeAttr, "]")).setAttribute(removeAttr, index);
+}
+function createAndAppendNote(note, i, parentselector) {
+  var noteElem = createNoteElement(note.time, note.comment, note.gap);
+  setNoteIDs(noteElem, i, 'data-note-id', 'data-input-id', 'data-remove-item');
+  document.querySelector(parentselector).append(noteElem);
+}
 var noteItems = [];
+var recordsParentSelector = '.records-wrap';
+var savedNotes = 'note-items';
 function notes() {
-  var recordsWrap = document.querySelector('.records-wrap');
+  var recordsWrap = document.querySelector(recordsParentSelector);
   if (localStorage.getItem('note-items')) {
-    var savedNoteItems = JSON.parse(localStorage.getItem('note-items'));
-    noteItems = [].concat(_toConsumableArray(noteItems), _toConsumableArray(savedNoteItems));
-    // console.log(noteItems);
-    console.log(savedNoteItems);
-    renderLocalNotes('.records-wrap');
-    scrollToBottom('.records-wrap');
+    updateNotes('note-items');
+    renderLocalNotes(recordsParentSelector);
+    scrollToBottom(recordsParentSelector);
   }
   document.addEventListener('timerSplit', function (e) {
     var time = (0,_stopwatch__WEBPACK_IMPORTED_MODULE_17__.split)((0,_stopwatch__WEBPACK_IMPORTED_MODULE_17__.getSeconds)());
-    var newNote = new Note(time, '', '', '.records-wrap');
+    var newNote = new Note(time, '', '', recordsParentSelector);
     noteItems.push(newNote);
-    localStorage.setItem('note-items', JSON.stringify(noteItems));
+    updateSavedNotes('note-items');
     recordsWrap.innerHTML = '';
     noteItems.forEach(function (note, i) {
-      var noteElem = createNoteElement(note.time, note.comment, note.gap);
-      noteElem.setAttribute('data-note-id', i);
-      noteElem.querySelector('input').setAttribute('data-input-id', i);
-      noteElem.querySelector('[data-remove-item]').setAttribute('data-remove-item', i);
-      recordsWrap.append(noteElem);
+      createAndAppendNote(note, i, recordsParentSelector);
     });
-    scrollToBottom('.records-wrap');
+    scrollToBottom(recordsParentSelector);
   });
   recordsWrap.addEventListener('input', function (e) {
     var inputID = e.target.getAttribute('data-input-id');
     noteItems[inputID].comment = e.target.value;
-    localStorage.setItem('note-items', JSON.stringify(noteItems));
+    updateSavedNotes('note-items');
   });
   document.addEventListener('timerReset', function (e) {
     noteItems = [];
     localStorage.removeItem('note-items');
     recordsWrap.innerHTML = '';
   });
-  removeItem('.records-wrap');
+  removeItems(recordsParentSelector);
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (notes);
 
